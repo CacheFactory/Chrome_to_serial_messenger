@@ -1,0 +1,22 @@
+{
+  "name": "chrome_extention",
+  "description": "",
+  "main": "background.js",
+  "authors": [
+    "Edward Anderson"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "^0.14.7"
+  }
+}
