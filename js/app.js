@@ -1,37 +1,41 @@
-chrome.runtime.sendMessage({message: "getSerialPorts"}, function(response) {
-  console.log(response)
-  chrome.runtime.sendMessage({message: "connectSerial", port:  "/dev/tty.wchusbserial1420", bitRate: 9600} ,function() {
-    
-    chrome.runtime.sendMessage({message: "listenSerial" } ,function(msg) {
-  
-    });
 
-  
-  })
-});
 
 chrome.runtime.onConnect.addListener(function(port) {
   if(port.name == "serialConnection"){
     port.onMessage.addListener(function(msg) {
-      console.log(msg)
+      var row = document.createElement("div");
+      row.innerHTML = msg.serialString.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      var main = document.querySelector('.main')
+      main.insertBefore(row, main.firstChild )
     });
   }
 });
 
-FRONT_END_APP = {
-  setColors: function(red, green, blue){
-    //chrome.runtime.sendMessage({message: "sendSerial", red: red, green: green, blue: blue} ,function() { })
-    chrome.runtime.sendMessage({message: "sendCommand"} ,function() { })
-  }
-}
+FRONT_END_APP = {}
 
+document.addEventListener("DOMContentLoaded", function() {
+  chrome.runtime.sendMessage({message: "getSerialPorts"}, function(ports) {
+    var portsArray = ports.map(function(port){ 
+      return port.path; 
+    });
+    FRONT_END_APP.ports = portsArray;
+    
+    var selectedCallback = function(port){
+      chrome.runtime.sendMessage({message: "connectSerial", port:  port, bitRate: 9600} ,function() {
+        chrome.runtime.sendMessage({message: "listenSerial" } ,function(msg) {
+          
+        });
+      })
+    }
+    
+    var sendCallback = function(state){
+      chrome.runtime.sendMessage({message: "sendCommand", data: state} ,function() { 
+        // Done
+      })
+    }
 
-// document.body.onkeyup = function(){
-//   var red = parseInt(document.querySelector('#red').value, 10) || 0;
-//   var green = parseInt(document.querySelector('#green').value, 10) || 0;
-//   var blue = parseInt(document.querySelector('#blue').value, 10) || 0;
-//   console.log(red, green, blue)
-//   chrome.runtime.sendMessage({message: "sendSerial", red: red, green: green, blue: blue} ,function() {
+    React.render(React.createElement(DropDown, {items: FRONT_END_APP.ports, selectedCallback: selectedCallback, sendCallback: sendCallback}), document.getElementById("ports"));
 
-//   })
-// }
+    
+  });
+});

@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "app": {
     "background": {
-      "scripts": ["background.js", "js/serial_function_request.js"]
+      "scripts": ["background.js", "js/serial_function_request.js", "js/array_buffer_helper.js"]
     }
   },
   "permissions": [

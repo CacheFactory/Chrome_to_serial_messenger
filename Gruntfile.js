@@ -2,8 +2,25 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-include-source');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-babel');
 
   grunt.initConfig({
+    babel: {
+      options: {
+        plugins: ['transform-react-jsx'], // npm install babel-plugin-transform-react-jsx
+        presets: ['es2015', 'react'] // npm install babel-preset-es2015 babel-preset-react
+      },
+      jsx: {
+        files: [{
+          expand: true,
+          cwd: 'js/components',
+          src: ['*.jsx'],
+          dest: 'dist/js/components/',
+          ext: '.js'
+        }]
+      }
+    },
+
     copy: {
       extention: {
         files: [
@@ -65,6 +82,6 @@ module.exports = function(grunt) {
     }
   })
 
-  grunt.registerTask('default', ['includeSource', 'copy']);
+  grunt.registerTask('default', ['babel', 'copy', 'includeSource']);
 
 };
